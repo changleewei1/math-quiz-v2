@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function StudentLogin() {
+function StudentLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useState('');
@@ -109,6 +109,14 @@ export default function StudentLogin() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function StudentLogin() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p>載入中...</p></div>}>
+      <StudentLoginContent />
+    </Suspense>
   );
 }
 

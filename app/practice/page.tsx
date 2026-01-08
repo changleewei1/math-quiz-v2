@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { Chapter, QuestionTypeData, Question } from '@/types';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 
-export default function PracticePage() {
+function PracticePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialChapterId = searchParams.get('chapterId') || '';
@@ -539,6 +539,14 @@ export default function PracticePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center"><p>載入中...</p></div>}>
+      <PracticePageContent />
+    </Suspense>
   );
 }
 

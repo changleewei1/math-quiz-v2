@@ -4,6 +4,8 @@ import { supabaseServer } from '@/lib/supabaseServer';
 import { getTeacherSession } from '@/lib/teacherAuth';
 import { verifyAdminCookie } from '@/lib/adminAuth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // 驗證老師或管理員權限
