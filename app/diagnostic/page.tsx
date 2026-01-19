@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { Chapter } from '@/types';
@@ -123,7 +123,7 @@ const PRACTICE_BOOK_STRUCTURE = [
   },
 ];
 
-export default function DiagnosticPage() {
+function DiagnosticPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const subject = searchParams.get('subject'); // 'math' 或 'physics'
@@ -422,6 +422,20 @@ export default function DiagnosticPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DiagnosticPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <p className="text-gray-600">載入中...</p>
+        </div>
+      }
+    >
+      <DiagnosticPageContent />
+    </Suspense>
   );
 }
 
