@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       selectedChoiceIndex,
       isCorrect,
       timeSpent,
+      timeSpentMs,
     } = body;
 
     if (!sessionId || !questionId) {
@@ -28,6 +29,15 @@ export async function POST(request: NextRequest) {
     const supabase = supabaseServer();
 
     // 記錄 attempt
+    const resolvedTimeSpentMs =
+      typeof timeSpentMs === 'number'
+        ? Math.max(0, Math.round(timeSpentMs))
+        : typeof timeSpent === 'number'
+          ? Math.max(0, Math.round(timeSpent * 1000))
+          : null;
+    const resolvedTimeSpentSec =
+      typeof resolvedTimeSpentMs === 'number' ? Math.round(resolvedTimeSpentMs / 1000) : timeSpent || null;
+
     const { data: attempt, error } = await supabase
       .from('question_attempts')
       .insert({
@@ -41,7 +51,8 @@ export async function POST(request: NextRequest) {
         user_answer: userAnswer || null,
         selected_choice_index: selectedChoiceIndex || null,
         is_correct: isCorrect,
-        time_spent_sec: timeSpent || null,
+        time_spent_sec: resolvedTimeSpentSec,
+        time_spent_ms: resolvedTimeSpentMs,
       })
       .select()
       .single();

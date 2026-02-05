@@ -9,6 +9,7 @@ export default function DiagnosticResultPage() {
   const [result, setResult] = useState<any | null>(null);
   const [session, setSession] = useState<any | null>(null);
   const [chapters, setChapters] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<any[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function DiagnosticResultPage() {
         }
         setResult(data.result);
         setSession(data.session);
+        setAnswers(data.answers || []);
       } catch (err: any) {
         setError(err.message || '載入結果失敗');
       }
@@ -49,6 +51,29 @@ export default function DiagnosticResultPage() {
     if (!result?.chapter_summary) return [];
     return result.chapter_summary as any[];
   }, [result]);
+
+  const formatTime = (timeMs: number | null) => {
+    if (typeof timeMs !== 'number' || Number.isNaN(timeMs)) return '—';
+    if (timeMs >= 60000) {
+      const totalSeconds = Math.round(timeMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${(timeMs / 1000).toFixed(1)} 秒`;
+  };
+
+  const timingSummary = useMemo(() => {
+    const times = answers
+      .map((a) => (typeof a.time_spent_ms === 'number' ? a.time_spent_ms : null))
+      .filter((t: number | null) => typeof t === 'number') as number[];
+    const avgTimeMs = times.length > 0 ? times.reduce((sum, t) => sum + t, 0) / times.length : null;
+    const slowestAnswers = [...answers]
+      .filter((a) => typeof a.time_spent_ms === 'number')
+      .sort((a, b) => (b.time_spent_ms || 0) - (a.time_spent_ms || 0))
+      .slice(0, 3);
+    return { avgTimeMs, slowestAnswers };
+  }, [answers]);
 
   if (error) {
     return (
@@ -122,6 +147,51 @@ export default function DiagnosticResultPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-8 bg-white rounded-lg border p-6">
+          <h2 className="text-xl font-bold mb-4">作答速度</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-50 rounded">
+              <p className="text-sm text-gray-600">平均每題</p>
+              <p className="text-2xl font-semibold">{formatTime(timingSummary.avgTimeMs)}</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded">
+              <p className="text-sm text-gray-600 mb-2">最慢題目 Top 3</p>
+              <div className="space-y-2 text-sm text-gray-700">
+                {timingSummary.slowestAnswers.length === 0 && <p>—</p>}
+                {timingSummary.slowestAnswers.map((a, idx) => (
+                  <div key={a.id || a.question_id} className="flex justify-between gap-2">
+                    <span className="truncate">
+                      {idx + 1}. {a.question?.prompt || a.question_id}
+                    </span>
+                    <span className="whitespace-nowrap text-gray-500">
+                      {formatTime(a.time_spent_ms ?? null)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 bg-white rounded-lg border p-6">
+          <h2 className="text-xl font-bold mb-4">每題作答時間</h2>
+          <div className="space-y-4">
+            {answers.length === 0 && <p className="text-sm text-gray-500">—</p>}
+            {answers.map((a, idx) => (
+              <div key={a.id || a.question_id} className="border rounded p-4">
+                <div className="flex items-center justify-between mb-2 text-sm text-gray-500">
+                  <span>第 {idx + 1} 題</span>
+                  <span>作答時間：{formatTime(a.time_spent_ms ?? null)}</span>
+                </div>
+                <p className="text-gray-800 mb-2">{a.question?.prompt || a.question_id}</p>
+                <p className={`text-sm ${a.is_correct ? 'text-green-600' : 'text-red-600'}`}>
+                  {a.is_correct ? '答對' : '答錯'}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

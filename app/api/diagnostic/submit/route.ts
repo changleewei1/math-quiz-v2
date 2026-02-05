@@ -42,7 +42,19 @@ export async function POST(request: NextRequest) {
     const analysisMap: Record<string, { wrong: number; total: number; hardWrong: boolean }> = {};
 
     for (const answer of answers) {
-      const { questionId, typeId, typeName, typeCode, difficulty, qtype, prompt, userAnswer, selectedChoiceIndex, timeSpent } = answer;
+      const {
+        questionId,
+        typeId,
+        typeName,
+        typeCode,
+        difficulty,
+        qtype,
+        prompt,
+        userAnswer,
+        selectedChoiceIndex,
+        timeSpent,
+        timeSpentMs,
+      } = answer;
 
       // 取得正確答案
       const { data: question } = await supabase
@@ -59,6 +71,15 @@ export async function POST(request: NextRequest) {
       }
 
       // 記錄 attempt
+      const resolvedTimeSpentMs =
+        typeof timeSpentMs === 'number'
+          ? Math.max(0, Math.round(timeSpentMs))
+          : typeof timeSpent === 'number'
+            ? Math.max(0, Math.round(timeSpent * 1000))
+            : null;
+      const resolvedTimeSpentSec =
+        typeof resolvedTimeSpentMs === 'number' ? Math.round(resolvedTimeSpentMs / 1000) : timeSpent || null;
+
       attempts.push({
         session_id: session.id,
         question_id: questionId,
@@ -70,7 +91,8 @@ export async function POST(request: NextRequest) {
         user_answer: userAnswer || null,
         selected_choice_index: selectedChoiceIndex || null,
         is_correct: isCorrect,
-        time_spent_sec: timeSpent || null,
+        time_spent_sec: resolvedTimeSpentSec,
+        time_spent_ms: resolvedTimeSpentMs,
       });
 
       // 統計分析

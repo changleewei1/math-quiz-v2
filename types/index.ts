@@ -77,6 +77,7 @@ export interface Attempt {
   selected_choice_index: number | null;
   is_correct: boolean;
   time_spent_sec: number | null;
+  time_spent_ms?: number | null;
   created_at: string;
 }
 

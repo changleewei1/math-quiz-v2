@@ -38,6 +38,12 @@ export async function POST(
     const answerRows = answers.map((answer: any) => {
       const question = questionMap.get(answer.questionId);
       if (!question) return null;
+      const resolvedTimeSpentMs =
+        typeof answer.timeSpentMs === 'number'
+          ? Math.max(0, Math.round(answer.timeSpentMs))
+          : typeof answer.timeSpent === 'number'
+            ? Math.max(0, Math.round(answer.timeSpent * 1000))
+            : null;
       const isCorrect =
         question.qtype === 'mcq'
           ? answer.selectedChoiceIndex === question.correct_choice_index
@@ -49,7 +55,7 @@ export async function POST(
         chapter_id: question.chapter_id,
         is_correct: isCorrect,
         user_answer: answer.userAnswer ?? answer.selectedChoiceIndex ?? null,
-        time_spent_ms: answer.timeSpent || 0,
+        time_spent_ms: resolvedTimeSpentMs,
       };
     }).filter(Boolean);
 
