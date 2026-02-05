@@ -361,13 +361,13 @@ export default function ExamDiagnosticMathPage() {
             <div className="bg-white rounded-lg shadow p-4 lg:sticky lg:top-6">
               <div className="text-center">
                 <div className="bg-lime-500 text-white rounded-t-lg py-3 font-semibold">
-                  Questions answered
+                  已作答題數
                 </div>
                 <div className="text-4xl font-bold text-gray-700 py-6 border-x border-b">
                   {answeredStats.answeredCount} / {questions.length}
                 </div>
                 <div className="bg-sky-500 text-white py-3 font-semibold">
-                  Time elapsed
+                  作答時間
                 </div>
                 <div className="border-x border-b py-4">
                   {(() => {
@@ -391,7 +391,7 @@ export default function ExamDiagnosticMathPage() {
                   })()}
                 </div>
                 <div className="bg-orange-500 text-white py-3 font-semibold flex items-center justify-center gap-2">
-                  SmartScore out of 100
+                  得分/100
                   <span className="w-5 h-5 rounded-full bg-white/20 text-xs flex items-center justify-center">?</span>
                 </div>
                 <div className="text-4xl font-bold text-gray-700 py-6 border-x border-b rounded-b-lg">
