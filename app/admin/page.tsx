@@ -1812,7 +1812,7 @@ function AdminPageContent() {
     setEditingExamId(null);
     setExamForm({
       year: q.year ? String(q.year) : '',
-      code: q.code || '',
+      code: '',
       description: q.description || '',
       options: Array.isArray(q.options) || typeof q.options === 'object' ? JSON.stringify(q.options) : '',
       answer:
