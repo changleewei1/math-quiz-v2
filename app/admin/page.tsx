@@ -2423,7 +2423,10 @@ P-2021-05,"下列何者屬於氧化反應？","鐵生鏽",2021,"[""鐵生鏽"","
                     onChange={(e) => setExamImportText(e.target.value)}
                     className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-3"
                     rows={8}
-                    placeholder="code,description,answer,year,options,explanation,difficulty,is_active"
+                    placeholder={`code,description,answer,year,options,explanation,difficulty,is_active
+M-2022-01,"已知直角三角形兩邊 3,4，求斜邊長","5",2022,"[""3"",""4"",""5"",""6""]","依畢氏定理，斜邊=5",easy,true
+M-2022-02,"解二元一次聯立方程式：x+y=7, x-y=1","x=4, y=3",2022,,相加消去 y,easy,true
+P-2021-05,"下列何者屬於氧化反應？","鐵生鏽",2021,"[""鐵生鏽"",""冰融化"",""鹽溶於水"",""水蒸發""]","氧化為與氧反應",easy,true`}
                   />
 
                   {examImportResult && (
