@@ -1808,6 +1808,23 @@ function AdminPageContent() {
     });
   };
 
+  const handleInsertExamQuestion = (q: any) => {
+    setEditingExamId(null);
+    setExamForm({
+      year: q.year ? String(q.year) : '',
+      code: q.code || '',
+      description: q.description || '',
+      options: Array.isArray(q.options) || typeof q.options === 'object' ? JSON.stringify(q.options) : '',
+      answer:
+        Array.isArray(q.answer) || typeof q.answer === 'object'
+          ? JSON.stringify(q.answer)
+          : String(q.answer ?? ''),
+      explanation: q.explanation || '',
+      difficulty: q.difficulty || '',
+      isActive: typeof q.is_active === 'boolean' ? q.is_active : true,
+    });
+  };
+
   const handleDeleteExamQuestion = async (id: string) => {
     if (!confirm('確定要移除此題目？此操作無法復原。')) return;
     setExamDeleteLoading(true);
@@ -2642,6 +2659,12 @@ P-2021-05,"下列何者屬於氧化反應？","鐵生鏽",2021,"[""鐵生鏽"","
                           </td>
                           <td className="p-2 text-center">
                             <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleInsertExamQuestion(q)}
+                                className="px-2 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200"
+                              >
+                                插入
+                              </button>
                               <button
                                 onClick={() => handleEditExamQuestion(q)}
                                 className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
